@@ -1,0 +1,19 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "AoC 2019",
+  "main": "index.js",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^12.12.14",
+    "@types/shelljs": "^0.8.6",
+    "@types/yargs": "^13.0.3",
+    "shelljs": "^0.8.3",
+    "ts-node": "^8.5.4",
+    "typescript": "^3.7.2",
+    "yargs": "^15.0.2"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts"
+  }
+}
