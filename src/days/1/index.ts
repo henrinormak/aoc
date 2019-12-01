@@ -37,9 +37,9 @@ async function partTwo() {
   }, 0);
 }
 
-partOne().then((result) => {
-  console.log('Result of part one', result);
-  return partTwo();
-}).then((result) => {
-  console.log('Result of part two', result);
-}).catch(console.error);
+async function solve() {
+  console.log('Result of part one', await partOne());
+  console.log('Result of part two', await partTwo());
+}
+
+solve().catch(console.error);
