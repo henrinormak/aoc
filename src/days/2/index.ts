@@ -1,7 +1,6 @@
 import { IntcodeComputer } from '../../lib/intcode';
-import { readInput } from '../../lib/input';
 
-async function partOne({ verb, noun }: { verb?: number; noun?: number } = {}) {
+async function partOne() {
   const computer = new IntcodeComputer();
   await computer.initialiseFromFile('./input.txt', __dirname);
   return computer.run()[0];
@@ -15,7 +14,7 @@ async function partTwo() {
     for (let verb = 0; verb <= 99; verb++) {
       computer.setInput({ verb, noun });
       computer.reset();
-      const output = await computer.run();
+      const output = computer.run();
 
       if (output[0] === 19690720) {
         return 100 * noun + verb;
