@@ -46,8 +46,6 @@ export class IntcodeComputer {
   private handleOpCode(opCode: OpCode, parameterModes: ParameterMode[], memory: number[], position: number): { position: number, memory: number[] } {
     const result = [...memory];
 
-    console.log('Handle', opCode, parameterModes);
-
     switch (opCode) {
       case OpCode.ADD: {
         const length = 4;
