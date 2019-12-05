@@ -16,7 +16,7 @@ async function partTwo() {
 }
 
 async function solve() {
-  // console.log('Result of part one', await partOne());
+  console.log('Result of part one', await partOne());
   console.log('Result of part two', await partTwo());
 }
 
