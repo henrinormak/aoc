@@ -22,13 +22,14 @@ export class IntcodeComputer {
   private instructionPointer: number;
   private originalMemory: number[];
   private output: number[];
-  private input: number;
+  private input: number[];
+  private currentInput: number;
 
-  constructor(input: number = 0) {
+  constructor(inputs: number[] = [0]) {
     this.memory = [];
     this.output = [];
     this.instructionPointer = 0;
-    this.setInput(input);
+    this.setInput(inputs);
   }
 
   async initialiseFromFile(filePath: string, relativeTo: string) {
@@ -68,7 +69,8 @@ export class IntcodeComputer {
       case OpCode.STORE: {
         const length = 2;
         const [addr] = memory.slice(position + 1, position + length);
-        result[addr] = this.input;
+        result[addr] = this.input[this.currentInput];
+        this.currentInput++;
         return { position: position + length, memory: result };
       }
       case OpCode.OUTPUT: {
@@ -143,12 +145,21 @@ export class IntcodeComputer {
     return { opCode: pureOpCode, parameterModes: parameterModes };
   }
 
-  setInput(number: number) {
-    this.input = number;
+  setInput(numbers: number[]) {
+    this.input = numbers;
+    this.currentInput = 0;
+  }
+
+  addInput(number: number) {
+    this.input = [...this.input, number];
   }
 
   getOutput() {
     return [...this.output];
+  }
+
+  isHalted() {
+    return this.nextOpCode().opCode === OpCode.HALT;
   }
 
   step() {
@@ -168,13 +179,28 @@ export class IntcodeComputer {
       opCode = this.nextOpCode().opCode;
     }
 
-    return this.memory;
+    return this.output;
+  }
+
+  runUntilOutput() {
+    let { opCode } = this.nextOpCode();
+    let lastOpCode: OpCode | undefined = undefined;
+
+    while (opCode !== OpCode.HALT && lastOpCode !== OpCode.OUTPUT) {
+      this.step();
+      lastOpCode = opCode;
+      opCode = this.nextOpCode().opCode;
+    }
+
+    return this.output;
   }
 
   reset() {
     this.memory = [...this.originalMemory];
     this.output = [];
     this.instructionPointer = 0;
+    this.currentInput = 0;
+    this.input = [];
   }
 }
 
