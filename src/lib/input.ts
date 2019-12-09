@@ -3,7 +3,8 @@ import * as fs from 'fs';
 
 export interface InputOptions {
   relativeTo?: string;
-  splitLines?: boolean;
+  splitBy?: string;
+  splitLines?: boolean; // alias for "splitBy: '\n'"
 }
 
 export async function readInput(filePath: string, options: InputOptions = {}) {
@@ -19,6 +20,10 @@ function readFileContents(filePath: string, options: InputOptions = {}): Promise
       }
 
       const string = data.toString('ascii');
+
+      if (options.splitBy === undefined) {
+        return resolve(string.split(options.splitBy));
+      }
 
       if (options.splitLines) {
         return resolve(string.split('\n'));
