@@ -9,12 +9,14 @@ enum OpCode {
   JUMP_FALSE = 6,
   LESS_THAN = 7,
   EQUALS = 8,
+  SET_RELATIVE_BASE = 9,
   HALT = 99
 }
 
 enum ParameterMode {
   POSITION = 0,
   IMMEDIATE = 1,
+  RELATIVE = 2,
 }
 
 export class IntcodeComputer {
@@ -24,11 +26,13 @@ export class IntcodeComputer {
   private output: number[];
   private input: number[];
   private currentInput: number;
+  private relativeBase: number;
 
   constructor(inputs: number[] = [0]) {
     this.memory = [];
     this.output = [];
     this.instructionPointer = 0;
+    this.relativeBase = 0;
     this.setInput(inputs);
   }
 
@@ -44,87 +48,93 @@ export class IntcodeComputer {
     this.instructionPointer = 0;
   }
 
+  private getParameter(mode: ParameterMode | undefined, value: number) {
+    if (mode === undefined) {
+      return this.memory[value] ?? 0;
+    }
+
+    switch (mode) {
+      case ParameterMode.POSITION:
+        return this.memory[value] ?? 0;
+      case ParameterMode.IMMEDIATE:
+        return value;
+      case ParameterMode.RELATIVE:
+        return this.memory[value + this.relativeBase] ?? 0;
+    }
+  }
+
+  private getParameterWriteAddress(mode: ParameterMode | undefined, value: number) {
+    if (mode === undefined) {
+      return value;
+    }
+
+    switch (mode) {
+      case ParameterMode.POSITION:
+      case ParameterMode.IMMEDIATE:
+        return value;
+      case ParameterMode.RELATIVE:
+        return value + this.relativeBase;
+    }
+  }
+
   private handleOpCode(opCode: OpCode, parameterModes: ParameterMode[], memory: number[], position: number): { position: number, memory: number[] } {
     const result = [...memory];
 
+    // At most 3 arguments (a, b, target)
+    const [r1Val, r2Val, r3Val] = memory.slice(position + 1, position + 4);
+    const r1 = this.getParameter(parameterModes[0], r1Val);
+    const r2 = this.getParameter(parameterModes[1], r2Val);
+    const r3 = this.getParameter(parameterModes[2], r3Val);
+
+    // For commands that are shorter
+    let length = 4;
+
     switch (opCode) {
-      case OpCode.ADD: {
-        const length = 4;
-        const [aAddr, bAddr, targetAddr] = memory.slice(position + 1, position + length);
-        const a = parameterModes[0] === ParameterMode.IMMEDIATE ? aAddr : result[aAddr];
-        const b = parameterModes[1] === ParameterMode.IMMEDIATE ? bAddr : result[bAddr];
-
-        result[targetAddr] = a + b;
-        return { position: position + length, memory: result };
-      }
-      case OpCode.MULTIPLY: {
-        const length = 4;
-        const [aAddr, bAddr, targetAddr] = memory.slice(position + 1, position + length);
-        const a = parameterModes[0] === ParameterMode.IMMEDIATE ? aAddr : result[aAddr];
-        const b = parameterModes[1] === ParameterMode.IMMEDIATE ? bAddr : result[bAddr];
-
-        result[targetAddr] = a * b;
-        return { position: position + length, memory: result };
-      }
-      case OpCode.STORE: {
-        const length = 2;
-        const [addr] = memory.slice(position + 1, position + length);
-        result[addr] = this.input[this.currentInput];
+      case OpCode.ADD:
+        result[this.getParameterWriteAddress(parameterModes[2], r3Val)] = r1 + r2;
+        break;
+      case OpCode.MULTIPLY:
+        result[this.getParameterWriteAddress(parameterModes[2], r3Val)] = r1 * r2;
+        break;
+      case OpCode.STORE:
+        result[this.getParameterWriteAddress(parameterModes[0], r1Val)] = this.input[this.currentInput];
         this.currentInput++;
-        return { position: position + length, memory: result };
-      }
-      case OpCode.OUTPUT: {
-        const length = 2;
-        const [addr] = memory.slice(position + 1, position + length);
-        const a = parameterModes[0] === ParameterMode.IMMEDIATE ? addr : result[addr];
-        this.output.push(a);
-        return { position: position + length, memory: result };
-      }
-      case OpCode.JUMP_TRUE: {
-        const length = 3;
-        const [aAddr, bAddr] = memory.slice(position + 1, position + length);
-        const a = parameterModes[0] === ParameterMode.IMMEDIATE ? aAddr : result[aAddr];
-        const b = parameterModes[1] === ParameterMode.IMMEDIATE ? bAddr : result[bAddr];
-
-        if (a !== 0) {
-          return { position: b, memory: result };
+        length = 2;
+        break;
+      case OpCode.OUTPUT:
+        this.output.push(r1);
+        length = 2;
+        break;
+      case OpCode.JUMP_TRUE:
+        if (r1 !== 0) {
+          return { position: r2, memory: result };
         }
 
-        return { position: position + length, memory: result };
-      }
-      case OpCode.JUMP_FALSE: {
-        const length = 3;
-        const [aAddr, bAddr] = memory.slice(position + 1, position + length);
-        const a = parameterModes[0] === ParameterMode.IMMEDIATE ? aAddr : result[aAddr];
-        const b = parameterModes[1] === ParameterMode.IMMEDIATE ? bAddr : result[bAddr];
-
-        if (a === 0) {
-          return { position: b, memory: result };
+        length = 3;
+        break;
+      case OpCode.JUMP_FALSE:
+        if (r1 === 0) {
+          return { position: r2, memory: result };
         }
 
-        return { position: position + length, memory: result };
-      }
-      case OpCode.LESS_THAN: {
-        const length = 4;
-        const [aAddr, bAddr, targetAddr] = memory.slice(position + 1, position + length);
-        const a = parameterModes[0] === ParameterMode.IMMEDIATE ? aAddr : result[aAddr];
-        const b = parameterModes[1] === ParameterMode.IMMEDIATE ? bAddr : result[bAddr];
-
-        result[targetAddr] = a < b ? 1 : 0;
-        return { position: position + length, memory: result };
-      }
-      case OpCode.EQUALS: {
-        const length = 4;
-        const [aAddr, bAddr, targetAddr] = memory.slice(position + 1, position + length);
-        const a = parameterModes[0] === ParameterMode.IMMEDIATE ? aAddr : result[aAddr];
-        const b = parameterModes[1] === ParameterMode.IMMEDIATE ? bAddr : result[bAddr];
-
-        result[targetAddr] = a === b ? 1 : 0;
-        return { position: position + length, memory: result };
-      }
+        length = 3;
+        break;
+      case OpCode.LESS_THAN:
+        result[this.getParameterWriteAddress(parameterModes[2], r3Val)] = r1 < r2 ? 1 : 0;
+        break;
+      case OpCode.EQUALS:
+        result[this.getParameterWriteAddress(parameterModes[2], r3Val)] = r1 === r2 ? 1 : 0;
+        break;
+      case OpCode.SET_RELATIVE_BASE:
+        this.relativeBase += r1;
+        length = 2;
+        break;
       case OpCode.HALT:
-        return { position, memory };
+        length = 1;
+        break;
     }
+
+    return { position: position + length, memory: result };
   }
 
   private nextOpCode(): { opCode: OpCode, parameterModes: ParameterMode[] } {
@@ -133,7 +143,7 @@ export class IntcodeComputer {
 
     if (stringOpCode.length <= 2) {
       if (!isOpCode(opCode)) {
-        throw new Error('Unknown opcode');
+        throw new Error(`Unknown opcode ${opCode}`);
       }
 
       return { opCode, parameterModes: [ParameterMode.POSITION, ParameterMode.POSITION, ParameterMode.POSITION] };
@@ -200,6 +210,7 @@ export class IntcodeComputer {
     this.output = [];
     this.instructionPointer = 0;
     this.currentInput = 0;
+    this.relativeBase = 0;
     this.input = [];
   }
 }
