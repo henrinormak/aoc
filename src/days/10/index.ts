@@ -104,14 +104,14 @@ function getVisibleAsteroids(center: Asteroid, asteroids: Asteroid[]) {
 
 async function partOne() {
   const asteroids = await getAsteroids();
-  let mostVisible = 0;
+  let mostVisible: Asteroid[] = [];
   let bestIndex = 0;
 
   for (const [idx, asteroid] of asteroids.entries()) {
     const visible = getVisibleAsteroids(asteroid, asteroids);
 
-    if (visible.length > mostVisible) {
-      mostVisible = visible.length;
+    if (visible.length > mostVisible.length) {
+      mostVisible = visible;
       bestIndex = idx;
     }
   }
@@ -135,7 +135,8 @@ async function partTwo(station: Asteroid, asteroids: Asteroid[]) {
 
 async function solve() {
   const { station, asteroids, visible } = await partOne();
-  console.log('Result of part one', station, visible);
+  console.log('Result of part one', station, visible.length);
+  console.log(renderAsteroids(asteroids, station, visible), '\n');
   console.log('Result of part two', await partTwo(station, asteroids));
 }
 
