@@ -19,9 +19,9 @@ function readFileContents(filePath: string, options: InputOptions = {}): Promise
         return reject(err);
       }
 
-      const string = data.toString('ascii');
+      const string = data.toString('utf8');
 
-      if (options.splitBy === undefined) {
+      if (options.splitBy !== undefined) {
         return resolve(string.split(options.splitBy));
       }
 
