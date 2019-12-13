@@ -52,10 +52,15 @@ async function partTwo(maxBlocks: number) {
 
     // Quite a simple way to beat the game, just move paddle in response
     // to the ball being moved
-    if (tile === Tile.HorizontalPaddle) {
-      paddlePosition = { x, y };
-    } else if (tile == Tile.Ball) {
-      ballPosition = { x, y };
+    if (tile === Tile.HorizontalPaddle || tile === Tile.Ball) {
+      switch (tile) {
+        case Tile.HorizontalPaddle:
+          paddlePosition = { x, y };
+          break;
+        case Tile.Ball:
+          ballPosition = { x, y };
+          break;
+      }
 
       if (ballPosition.x === paddlePosition.x) {
         computer.setInput([0]);
