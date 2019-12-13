@@ -37,7 +37,7 @@ async function partOne() {
   return Array.from(screen.values()).filter((tile) => tile === Tile.Block).length;
 }
 
-async function partTwo(maxBlocks: number) {
+async function partTwo() {
   const computer = await initializeGame(true);
 
   let score = 0;
@@ -82,9 +82,8 @@ async function partTwo(maxBlocks: number) {
 }
 
 async function solve() {
-  const blocks = await partOne();
-  console.log('Result of part one', blocks);
-  console.log('Result of part two', await partTwo(blocks));
+  console.log('Result of part one', await partOne());
+  console.log('Result of part two', await partTwo());
 }
 
 solve().catch(console.error);
