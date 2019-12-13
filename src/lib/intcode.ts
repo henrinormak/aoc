@@ -172,6 +172,10 @@ export class IntcodeComputer {
     return this.nextOpCode().opCode === OpCode.HALT;
   }
 
+  overrideMemory(address: number, value: number) {
+    this.memory[address] = value;
+  }
+
   step() {
     const { opCode, parameterModes } = this.nextOpCode();
     const { position, memory } = this.handleOpCode(opCode, parameterModes, this.memory, this.instructionPointer);
