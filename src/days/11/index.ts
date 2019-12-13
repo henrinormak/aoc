@@ -110,8 +110,7 @@ async function runRobot(initialHull?: Map<string, Color>): Promise<{ hull: Map<s
     const currentColor = hull.has(key) ? hull.get(key) : Color.Black;
 
     computer.setInput([currentColor]);
-    computer.runUntilOutput();
-    const [color, movement] = computer.runUntilOutput().slice(-2);
+    const [color, movement] = computer.runUntilOutput(2);
 
     hull.set(key, color);
 

@@ -196,17 +196,24 @@ export class IntcodeComputer {
     return this.output;
   }
 
-  runUntilOutput() {
+  runUntilOutput(count: number = 1) {
     let { opCode } = this.nextOpCode();
-    let lastOpCode: OpCode | undefined = undefined;
+    let outputSeen = 0;
 
-    while (opCode !== OpCode.HALT && lastOpCode !== OpCode.OUTPUT) {
+    while (opCode !== OpCode.HALT) {
+      const ranOpCode = opCode;
       this.step();
-      lastOpCode = opCode;
       opCode = this.nextOpCode().opCode;
+
+      if (ranOpCode === OpCode.OUTPUT) {
+        outputSeen++;
+        if (outputSeen >= count) {
+          return this.output.slice(-count);
+        }
+      }
     }
 
-    return this.output;
+    return this.output.slice(-outputSeen);
   }
 
   reset() {

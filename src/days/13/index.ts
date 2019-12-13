@@ -28,9 +28,7 @@ async function partOne() {
   const screen = new Map<string, Tile>();
 
   while (!computer.isHalted()) {
-    computer.runUntilOutput();
-    computer.runUntilOutput();
-    const [x, y, tile] = computer.runUntilOutput().slice(-3);
+    const [x, y, tile] = computer.runUntilOutput(3);
     screen.set(keyForCoordinate({ x, y }), tile);
   }
 
@@ -46,9 +44,7 @@ async function partTwo() {
   const screen = new Map<string, Tile>();
 
   while (!computer.isHalted()) {
-    computer.runUntilOutput();
-    computer.runUntilOutput();
-    const [x, y, tile] = computer.runUntilOutput().slice(-3);
+    const [x, y, tile] = computer.runUntilOutput(3);
 
     // Quite a simple way to beat the game, just move paddle in response
     // to the ball being moved

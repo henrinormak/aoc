@@ -94,28 +94,28 @@ async function partTwo() {
 
     // A gets an additional input to start the process
     ampA.addInput(0);
-    let output: number[] = [];
+    let output: number = 0;
 
     // Run until E has halted
     while (!ampE.isHalted()) {
-      output = ampA.runUntilOutput();
-      ampB.addInput(output[output.length - 1]);
+      output = ampA.runUntilOutput()[0];
+      ampB.addInput(output);
 
-      output = ampB.runUntilOutput();
-      ampC.addInput(output[output.length - 1]);
+      output = ampB.runUntilOutput()[0];
+      ampC.addInput(output);
 
-      output = ampC.runUntilOutput();
-      ampD.addInput(output[output.length - 1]);
+      output = ampC.runUntilOutput()[0];
+      ampD.addInput(output);
 
-      output = ampD.runUntilOutput();
-      ampE.addInput(output[output.length - 1]);
+      output = ampD.runUntilOutput()[0];
+      ampE.addInput(output);
 
-      output = ampE.runUntilOutput();
-      ampA.addInput(output[output.length - 1]);
+      output = ampE.runUntilOutput()[0];
+      ampA.addInput(output);
     }
 
-    if (output[output.length - 1] > maxThrust) {
-      maxThrust = output[output.length - 1];
+    if (output > maxThrust) {
+      maxThrust = output;
       bestPhases = [a, b, c, d, e];
     }
   }
