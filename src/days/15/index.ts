@@ -202,20 +202,20 @@ async function partOne(world: Map<string, Element>) {
 
 async function partTwo(world: Map<string, Element>) {
   let minutes = 0;
+  let open = Array.from(world.entries()).filter(([_, element]) => element === Element.Open);
 
-  while (Array.from(world.values()).some((element) => element === Element.Open)) {
-    // Oxygenate neighbours of all oxygenated spaces
-    const oxygenated = Array.from(world.entries()).filter(([pos, element]) => element === Element.Oxygen || element === Element.OxygenSystem);
-
-    for (const [key] of oxygenated) {
+  while (open.length > 0) {
+    // Oxygenate all open spaces that have a neighbouring oxygen source
+    const oxygenated = open.filter(([key]) => {
       const position = positionForKey(key);
-      getNeighbours(position).forEach((pos) => {
-        if (world.get(keyForPosition(pos)) === Element.Open) {
-          world.set(keyForPosition(pos), Element.Oxygen);
-        }
+      return getNeighbours(position).some((neighbour) => {
+        const element = world.get(keyForPosition(neighbour));
+        return element === Element.Oxygen || element === Element.OxygenSystem;
       });
-    }
+    });
 
+    oxygenated.forEach(([key]) => world.set(key, Element.Oxygen));
+    open = Array.from(world.entries()).filter(([_, element]) => element === Element.Open);
     minutes++;
   }
 
