@@ -51,20 +51,11 @@ async function partTwo() {
   // L,10,L,8,R,8,L,8,R,6,L,10,L,8,R,8,L,8,R,6,L,6,R,8,R,8,R,6,R,6,L,8,L,10,R,6,R,8,R,8,R,6,R,6,L,8,L,10,R,6,R,8,R,8,R,6,R,6,L,8,L,10,R,6,R,8,R,8,L,10,L,8,R,8,L,8,R,6
   // This can be split into routines by hand (looking at the longest repeating patterns)
 
-  // Main routine
-  computer.addInputs(toInputs('A,A,B,C,B,C,B,C,B,A\n'));
-
-  // A
-  computer.addInputs(toInputs('L,10,L,8,R,8,L,8,R,6\n'));
-
-  // B
-  computer.addInputs(toInputs('R,6,R,8,R,8\n'));
-
-  // C
-  computer.addInputs(toInputs('R,6,R,6,L,8,L,10\n'));
-
-  // Video
-  computer.addInputs(toInputs('n\n'));
+  computer.addInputs(toInputs('A,A,B,C,B,C,B,C,B,A\n'));  // Main
+  computer.addInputs(toInputs('L,10,L,8,R,8,L,8,R,6\n')); // A
+  computer.addInputs(toInputs('R,6,R,8,R,8\n'));          // B
+  computer.addInputs(toInputs('R,6,R,6,L,8,L,10\n'));     // C
+  computer.addInputs(toInputs('n\n'));                    // video
 
   while (!computer.isHalted()) {
     const [output] = computer.runUntilOutput();
