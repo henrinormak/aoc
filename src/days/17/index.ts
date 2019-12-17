@@ -1,15 +1,5 @@
 import { IntcodeComputer } from '../../lib/intcode';
 
-enum Element {
-  Scaffold = '#',
-  Open = '.',
-  RobotUp = '^',
-  RobotDown = 'v',
-  RobotLeft = '<',
-  RobotRight = '>',
-  RobotDead = 'X',
-}
-
 function findIntersections(image: string) {
   const chars = image.split('\n').map((line) => line.split(''));
   const intersections: { x: number, y: number }[] = [];
@@ -19,19 +9,13 @@ function findIntersections(image: string) {
 
   for (let y = 1; y < lines - 1; y++) {
     for (let x = 1; x < characters - 1; x++) {
-      if (chars[y][x] === '#' && chars[y][x - 1] === '#' && chars[y][x + 1] === '#' && chars[y - 1][x] === '#' && chars[y + 1][x] === '#') {
+      if (![chars[y][x], chars[y][x - 1], chars[y][x + 1], chars[y - 1][x], chars[y + 1][x]].some((val) => val !== '#')) {
         intersections.push({ x, y });
       }
     }
   }
 
   return intersections;
-}
-
-function isElement(value: string): value is Element {
-  return [
-    Element.Scaffold, Element.Open, Element.RobotUp, Element.RobotDown, Element.RobotLeft, Element.RobotRight, Element.RobotDead
-  ].includes(value as Element);
 }
 
 function toInputs(string: string) {
