@@ -164,6 +164,10 @@ export class IntcodeComputer {
     this.input = [...this.input, number];
   }
 
+  addInputs(numbers: number[]) {
+    this.input = [...this.input, ...numbers];
+  }
+
   getOutput() {
     return [...this.output];
   }
@@ -214,6 +218,15 @@ export class IntcodeComputer {
     }
 
     return this.output.slice(-outputSeen);
+  }
+
+  runUntilInput() {
+    let { opCode } = this.nextOpCode();
+
+    while (opCode !== OpCode.HALT && opCode !== OpCode.STORE) {
+      this.step();
+      opCode = this.nextOpCode().opCode;
+    }
   }
 
   reset() {
