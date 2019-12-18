@@ -44,9 +44,6 @@ function solveCave(cave: string[][]) {
   const visited = new Set<string>();
   const keyFn = ({ position: { x, y }, keys }: State) => `${x}:${y}:${Array.from(keys.values()).join(',')}`;
 
-  console.log('All keys', availableKeys);
-  console.log('Initial state', queue[0]);
-
   // BFS over the world until we have all the keys collected
   while (queue.length > 0) {
     const state = queue.shift();
@@ -59,10 +56,6 @@ function solveCave(cave: string[][]) {
     }
 
     visited.add(key);
-
-    if (visited.size % 10000 === 0) {
-      console.log(visited.size);
-    }
 
     if (/[A-Z]/.test(cave[y][x]) && !keys.includes(cave[y][x].toLowerCase()) && availableKeys.has(cave[y][x].toLowerCase())) {
       continue;
