@@ -2,48 +2,64 @@ import BigNumber from 'bignumber.js';
 
 import { readInput } from '../../lib/input';
 
-async function partOne() {
+interface Operation {
+  op: 'cut' | 'new' | 'increment';
+  value?: number;
+}
+
+async function getOperations(): Promise<Operation[]> {
   const input = await readInput('./input.txt', { relativeTo: __dirname, splitLines: true });
 
-  const cardCount = 10007;
-  let cards = new Array(cardCount).fill(0, 0, cardCount).map((_, idx) => idx);
+  return input.map((line) => {
+    if (line.startsWith('deal into')) {
+      return { op: 'new', value: undefined };
+    }
 
-  for (const command of input) {
-    // Deal into new
-    if (command === 'deal into new stack') {
-      cards = cards.reverse();
-    } else if (/cut ([0-9]*)/.test(command)) {
-      const [_, count] = /cut (-?[0-9]*)/.exec(command);
-      const cut = parseInt(count, 10);
+    if (line.startsWith('deal with increment')) {
+      return { op: 'increment', value: parseInt(line.slice(20), 10) };
+    }
 
-      if (cut < 0) {
-        cards = [...cards.slice(cut), ...cards.slice(0, cut)];
-      } else {
-        cards = [...cards.slice(cut, cards.length), ...cards.slice(0, cut)];
-      }
-    } else if (/deal with increment ([0-9]*)/.test(command)) {
-      const [_, count] = /deal with increment ([0-9]*)/.exec(command);
-      const increment = parseInt(count);
+    if (line.startsWith('cut')) {
+      return { op: 'cut', value: parseInt(line.slice(4), 10) };
+    }
+  });
+}
 
-      const remaining = [...cards];
-      let idx = 0;
+async function partOne() {
+  const operations = await getOperations();
 
-      while (remaining.length > 0) {
-        const card = remaining.shift();
-        cards[idx % cards.length] = card;
-        idx += increment;
-      }
+  const deckSize = 10007;
+  let idx = 2019;
+
+  for (const { op: command, value } of operations) {
+    switch (command) {
+      case 'new':
+        // Reversing is just going to the index on the opposite side
+        idx = deckSize - idx - 1;
+        break;
+      case 'cut':
+        // Cutting is to offset our existing index by the cut (positive cut brings us to the front)
+        // Need the additional deckSize to avoid JS returning a negative result
+        idx = (idx - value + deckSize) % deckSize;
+        break;
+      case 'increment':
+        // Dealing with increment is equivalent to multiplying by the increment
+        idx = (idx * value) % deckSize;
+        break;
     }
   }
 
-  return cards.findIndex((val) => val === 2019);
+  return idx;
 }
 
 async function partTwo() {
-  const input = (await readInput('./input.txt', { relativeTo: __dirname, splitLines: true })).reverse();
-
   // Some next level math-wizardry with big numbers. Took the math from the solutions thread on Reddit:
   // https://www.reddit.com/r/adventofcode/comments/ee0rqi/2019_day_22_solutions/
+  // The gist is that each of the operations can be described as a mathematical function,
+  // which we can also "revert" - allowing us to start from the "index we want to track" and execute the operations in reverse
+  // In addition, the iterations count is used as a power of the resulting function to get the answer
+  // after that many iterations
+  const operations = (await getOperations()).reverse();
 
   const deckSize = new BigNumber(119315717514047);
   const count = new BigNumber(101741582076661);
@@ -57,21 +73,23 @@ async function partTwo() {
   let a = new BigNumber(1);
   let b = new BigNumber(0);
 
-  for (const command of input) {
-    if (command === 'deal into new stack') {
-      // Dealing into a new stack is reversing the existing stack, so an index i becomes -i+deckSize-1
-      a = a.times(-1);
-      b = b.times(-1).plus(deckSize.minus(1));
-    } else if (/cut ([0-9]*)/.test(command)) {
-      const [_, cut] = /cut (-?[0-9]*)/.exec(command);
-      // Cutting is just offsetting the index
-      b = b.plus(new BigNumber(cut));
-    } else if (/deal with increment ([0-9]*)/.test(command)) {
-      const [_, increment] = /deal with increment ([0-9]*)/.exec(command);
-      // As long as deckSize is a prime, p is increment modinv deckSize, which is (increment^deckSize-2) % deckSize
-      const p = new BigNumber(increment).pow(deckSize.minus(2), deckSize);
-      a = a.times(p);
-      b = b.times(p);
+  for (const { op: command, value } of operations) {
+    switch (command) {
+      case 'new':
+        // Opposite of deckSize - idx - 1 is still that
+        a = a.times(-1);
+        b = b.times(-1).plus(deckSize.minus(1));
+        break;
+      case 'cut':
+        // Opposite of (idx - value) is idx + value
+        b = b.plus(value);
+        break;
+      case 'increment':
+        // Opposite of (idx * value) is (idx * (value^deckSize-2) % deckSize), as long as deckSize is a prime
+        const p = new BigNumber(value).pow(deckSize.minus(2), deckSize);
+        a = a.times(p);
+        b = b.times(p);
+        break;
     }
   }
 
