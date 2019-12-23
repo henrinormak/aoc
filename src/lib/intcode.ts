@@ -24,16 +24,15 @@ export class IntcodeComputer {
   private instructionPointer: number;
   private originalMemory: number[];
   private output: number[];
-  private input: number[];
-  private currentInput: number;
   private relativeBase: number;
+  private getInput: () => number;
 
-  constructor(inputs: number[] = [0]) {
+  constructor(inputFn: () => number) {
     this.memory = [];
     this.output = [];
     this.instructionPointer = 0;
     this.relativeBase = 0;
-    this.setInput(inputs);
+    this.getInput = inputFn;
   }
 
   async initialiseFromFile(filePath: string, relativeTo: string) {
@@ -97,8 +96,7 @@ export class IntcodeComputer {
         result[this.getParameterWriteAddress(parameterModes[2], r3Val)] = r1 * r2;
         break;
       case OpCode.STORE:
-        result[this.getParameterWriteAddress(parameterModes[0], r1Val)] = this.input[this.currentInput];
-        this.currentInput++;
+        result[this.getParameterWriteAddress(parameterModes[0], r1Val)] = this.getInput();
         length = 2;
         break;
       case OpCode.OUTPUT:
@@ -155,21 +153,8 @@ export class IntcodeComputer {
     return { opCode: pureOpCode, parameterModes: parameterModes };
   }
 
-  setInput(numbers: number[]) {
-    this.input = numbers;
-    this.currentInput = 0;
-  }
-
-  addInput(number: number) {
-    this.input = [...this.input, number];
-  }
-
-  addInputs(numbers: number[]) {
-    this.input = [...this.input, ...numbers];
-  }
-
   getOutput() {
-    return [...this.output];
+    return this.output;
   }
 
   isHalted() {
@@ -233,9 +218,7 @@ export class IntcodeComputer {
     this.memory = [...this.originalMemory];
     this.output = [];
     this.instructionPointer = 0;
-    this.currentInput = 0;
     this.relativeBase = 0;
-    this.input = [];
   }
 }
 
