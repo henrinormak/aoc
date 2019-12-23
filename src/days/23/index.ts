@@ -43,8 +43,7 @@ async function partOne() {
         }
 
         console.log('New message', dest, x, y);
-        messageQueue[dest].push(x);
-        messageQueue[dest].push(y);
+        messageQueue[dest].push(x, y);
       }
 
       computer.step();
@@ -72,8 +71,7 @@ async function partTwo() {
           nat = { x, y };
           console.log('NAT updated', nat);
         } else {
-          messageQueue[dest].push(x);
-          messageQueue[dest].push(y);
+          messageQueue[dest].push(x, y);
         }
       }
 
@@ -90,8 +88,7 @@ async function partTwo() {
       }
 
       if (nat !== undefined) {
-        messageQueue[0].push(nat.x);
-        messageQueue[0].push(nat.y);
+        messageQueue[0].push(nat.x, nat.y);
         deliveredNat = nat;
       }
     }
