@@ -205,15 +205,6 @@ export class IntcodeComputer {
     return this.output.slice(-outputSeen);
   }
 
-  runUntilInput() {
-    let { opCode } = this.nextOpCode();
-
-    while (opCode !== OpCode.HALT && opCode !== OpCode.STORE) {
-      this.step();
-      opCode = this.nextOpCode().opCode;
-    }
-  }
-
   reset() {
     this.memory = [...this.originalMemory];
     this.output = [];
