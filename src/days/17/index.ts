@@ -136,7 +136,7 @@ function getSequenceToSolve(world: string) {
 }
 
 async function partOne() {
-  const computer = new IntcodeComputer();
+  const computer = new IntcodeComputer(() => 0);
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   const world = getWorld(computer);
@@ -148,7 +148,8 @@ async function partOne() {
 }
 
 async function partTwo() {
-  const computer = new IntcodeComputer([]);
+  const input: number[] = [];
+  const computer = new IntcodeComputer(() => input.shift());
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   const world = getWorld(computer);
@@ -164,11 +165,11 @@ async function partTwo() {
   // L,10,L,8,R,8,L,8,R,6, L,10,L,8,R,8,L,8,R,6, R,6,R,8,R,8, R,6,R,6,L,8,L,10, R,6,R,8,R,8, R,6,R,6,L,8,L,10, R,6,R,8,R,8, R,6,R,6,L,8,L,10, R,6,R,8,R,8, L,10,L,8,R,8,L,8,R,6
   // A,A,B,C,B,C,B,C,B,A
 
-  computer.addInputs(toInputs('A,A,B,C,B,C,B,C,B,A\n'));  // Main
-  computer.addInputs(toInputs('L,10,L,8,R,8,L,8,R,6\n')); // A
-  computer.addInputs(toInputs('R,6,R,8,R,8\n'));          // B
-  computer.addInputs(toInputs('R,6,R,6,L,8,L,10\n'));     // C
-  computer.addInputs(toInputs('n\n'));                    // video
+  input.push(...toInputs('A,A,B,C,B,C,B,C,B,A\n'));  // Main
+  input.push(...toInputs('L,10,L,8,R,8,L,8,R,6\n')); // A
+  input.push(...toInputs('R,6,R,8,R,8\n'));          // B
+  input.push(...toInputs('R,6,R,6,L,8,L,10\n'));     // C
+  input.push(...toInputs('n\n'));                    // video
 
   while (!computer.isHalted()) {
     const [output] = computer.runUntilOutput();

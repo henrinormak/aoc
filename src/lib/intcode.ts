@@ -165,6 +165,10 @@ export class IntcodeComputer {
     this.memory[address] = value;
   }
 
+  readMemory(address: number) {
+    return this.memory[address];
+  }
+
   step() {
     const { opCode, parameterModes } = this.nextOpCode();
     const { position, memory } = this.handleOpCode(opCode, parameterModes, this.memory, this.instructionPointer);

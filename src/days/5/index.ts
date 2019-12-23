@@ -2,17 +2,15 @@ import { readInput } from '../../lib/input';
 import { IntcodeComputer } from '../../lib/intcode';
 
 async function partOne() {
-  const computer = new IntcodeComputer([1]);
+  const computer = new IntcodeComputer(() => 1);
   await computer.initialiseFromFile('./input.txt', __dirname);
-  computer.run();
-  return computer.getOutput();
+  return computer.run();
 }
 
 async function partTwo() {
-  const computer = new IntcodeComputer([5]);
+  const computer = new IntcodeComputer(() => 5);
   await computer.initialiseFromFile('./input.txt', __dirname);
-  computer.run();
-  return computer.getOutput();
+  return computer.run();
 }
 
 async function solve() {

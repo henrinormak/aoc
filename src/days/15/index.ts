@@ -148,7 +148,8 @@ function shortestPathTo(position: { x: number; y: number }, world: Map<string, E
 }
 
 async function discoverWorld(): Promise<Map<string, Element>> {
-  const computer = new IntcodeComputer();
+  const input: number[] = [];
+  const computer = new IntcodeComputer(() => input.shift());
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   const droid: Droid = { position: { x: 0, y: 0 } };
@@ -162,7 +163,7 @@ async function discoverWorld(): Promise<Map<string, Element>> {
   let movement = Movement.West;
 
   while (!computer.isHalted()) {
-    computer.setInput([movement]);
+    input.push(movement);
     const targetPosition = move(droid.position, movement);
 
     const [status] = computer.runUntilOutput();

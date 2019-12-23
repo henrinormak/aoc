@@ -1,16 +1,14 @@
 import { IntcodeComputer } from '../../lib/intcode';
 
 async function partOne() {
-  const computer = new IntcodeComputer();
+  const computer = new IntcodeComputer(() => 1);
   await computer.initialiseFromFile('./input.txt', __dirname);
-  computer.setInput([1]);
   return computer.run();
 }
 
 async function partTwo() {
-  const computer = new IntcodeComputer();
+  const computer = new IntcodeComputer(() => 2);
   await computer.initialiseFromFile('./input.txt', __dirname);
-  computer.setInput([2]);
   return computer.run();
 }
 

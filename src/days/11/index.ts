@@ -1,4 +1,3 @@
-import { readInput } from '../../lib/input';
 import { IntcodeComputer } from '../../lib/intcode';
 
 enum Direction {
@@ -102,14 +101,14 @@ function renderHull(hull: Map<string, Color>, robot: Robot) {
 async function runRobot(initialHull?: Map<string, Color>): Promise<{ hull: Map<string, Color>, robot: Robot }> {
   const hull = new Map<string, Color>(initialHull);
   let robot = { position: { x: 0, y: 0 }, direction: Direction.Up };
-  const computer = new IntcodeComputer();
+
+  let currentColor = Color.Black;
+  const computer = new IntcodeComputer(() => currentColor);
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   while (!computer.isHalted()) {
     const key = `${robot.position.x}:${robot.position.y}`;
-    const currentColor = hull.has(key) ? hull.get(key) : Color.Black;
-
-    computer.setInput([currentColor]);
+    currentColor = hull.has(key) ? hull.get(key) : Color.Black;
     const [color, movement] = computer.runUntilOutput(2);
 
     hull.set(key, color);

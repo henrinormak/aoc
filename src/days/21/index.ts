@@ -9,10 +9,7 @@ function toString(output: number[]) {
 }
 
 async function partOne() {
-  const computer = new IntcodeComputer([]);
-  await computer.initialiseFromFile('./input.txt', __dirname);
-
-  computer.setInput(toInputs([
+  const input = toInputs([
     // Hole is 2 tiles away
     // And 4 tiles away is ground
     'NOT B T',
@@ -34,8 +31,10 @@ async function partOne() {
     // Store the choice
     'OR T J',
     'WALK\n'
-  ].join('\n')));
+  ].join('\n'));
 
+  const computer = new IntcodeComputer(() => input.shift());
+  await computer.initialiseFromFile('./input.txt', __dirname);
   const output = computer.run();
 
   if (output[output.length - 1] <= 200) {
@@ -46,10 +45,7 @@ async function partOne() {
 }
 
 async function partTwo() {
-  const computer = new IntcodeComputer([]);
-  await computer.initialiseFromFile('./input.txt', __dirname);
-
-  computer.setInput(toInputs([
+  const input = toInputs([
     // Hole is 2 tiles away
     // And 4 tiles away is ground
     'NOT B T',
@@ -71,8 +67,10 @@ async function partTwo() {
     'OR T J',
 
     'RUN\n'
-  ].join('\n')));
+  ].join('\n'));
 
+  const computer = new IntcodeComputer(() => input.shift());
+  await computer.initialiseFromFile('./input.txt', __dirname);
   const output = computer.run();
 
   if (output[output.length - 1] <= 200) {

@@ -8,8 +8,8 @@ enum Tile {
   Ball = 4,
 }
 
-async function initializeGame(playForFree?: boolean) {
-  const computer = new IntcodeComputer();
+async function initializeGame(inputFn: () => number, playForFree?: boolean) {
+  const computer = new IntcodeComputer(inputFn);
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   if (playForFree) {
@@ -19,29 +19,27 @@ async function initializeGame(playForFree?: boolean) {
   return computer;
 }
 
-function keyForCoordinate({ x, y }: { x: number; y: number }) {
-  return `${x}:${y}`;
-}
-
 async function partOne() {
-  const computer = await initializeGame();
-  const screen = new Map<string, Tile>();
+  const computer = await initializeGame(() => 0);
+  let blocks = 0;
 
   while (!computer.isHalted()) {
-    const [x, y, tile] = computer.runUntilOutput(3);
-    screen.set(keyForCoordinate({ x, y }), tile);
+    const [_, __, tile] = computer.runUntilOutput(3);
+    if (tile === Tile.Block) {
+      blocks++;
+    }
   }
 
-  return Array.from(screen.values()).filter((tile) => tile === Tile.Block).length;
+  return blocks;
 }
 
 async function partTwo() {
-  const computer = await initializeGame(true);
+  let dir: number = 0;
+  const computer = await initializeGame(() => dir, true);
 
   let score = 0;
   let ballPosition = { x: 0, y: 0 };
   let paddlePosition = { x: 0, y: 0 };
-  const screen = new Map<string, Tile>();
 
   while (!computer.isHalted()) {
     const [x, y, tile] = computer.runUntilOutput(3);
@@ -59,18 +57,16 @@ async function partTwo() {
       }
 
       if (ballPosition.x === paddlePosition.x) {
-        computer.setInput([0]);
+        dir = 0;
       } else if (ballPosition.x > paddlePosition.x) {
-        computer.setInput([1]);
+        dir = 1;
       } else if (ballPosition.x < paddlePosition.x) {
-        computer.setInput([-1]);
+        dir = -1;
       }
     }
 
     if (x == -1 && y === 0) {
       score = tile;
-    } else {
-      screen.set(keyForCoordinate({ x, y }), tile);
     }
   }
 

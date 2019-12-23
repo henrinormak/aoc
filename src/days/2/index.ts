@@ -1,22 +1,25 @@
 import { IntcodeComputer } from '../../lib/intcode';
 
 async function partOne() {
-  const computer = new IntcodeComputer();
+  const computer = new IntcodeComputer(() => 0);
   await computer.initialiseFromFile('./input.txt', __dirname);
-  return computer.run()[0];
+  computer.run();
+
+  return computer.readMemory(0);
 }
 
 async function partTwo() {
-  const computer = new IntcodeComputer();
+  const computer = new IntcodeComputer(() => 0);
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   for (let noun = 0; noun <= 99; noun++) {
     for (let verb = 0; verb <= 99; verb++) {
-      computer.setInput({ verb, noun });
       computer.reset();
-      const output = computer.run();
+      computer.overrideMemory(1, noun);
+      computer.overrideMemory(2, verb);
+      computer.run();
 
-      if (output[0] === 19690720) {
+      if (computer.readMemory(0) === 19690720) {
         return 100 * noun + verb;
       }
     }

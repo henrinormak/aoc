@@ -21,7 +21,8 @@ function generatePhaseCombinations(min: number, steps: number) {
 }
 
 async function partOne() {
-  const computer = new IntcodeComputer();
+  const input: number[] = [];
+  const computer = new IntcodeComputer(() => input.shift());
   await computer.initialiseFromFile('./input.txt', __dirname);
   let maxThrust = 0;
   let bestPhases: number[] = [0, 0, 0, 0, 0];
@@ -29,23 +30,23 @@ async function partOne() {
 
   for (const [a, b, c, d, e] of phaseCombinations) {
     computer.reset();
-    computer.setInput([a, 0]);
+    input.push(a, 0);
     let output = computer.run();
 
     computer.reset();
-    computer.setInput([b, output[0]]);
+    input.push(b, output[0]);
     output = computer.run();
 
     computer.reset();
-    computer.setInput([c, output[0]]);
+    input.push(c, output[0]);
     output = computer.run();
 
     computer.reset();
-    computer.setInput([d, output[0]]);
+    input.push(d, output[0]);
     output = computer.run();
 
     computer.reset();
-    computer.setInput([e, output[0]]);
+    input.push(d, output[0]);
     output = computer.run();
 
     if (output[0] > maxThrust) {
@@ -58,19 +59,27 @@ async function partOne() {
 }
 
 async function partTwo() {
-  const ampA = new IntcodeComputer();
+  const inputs: number[][] = [
+    [],
+    [],
+    [],
+    [],
+    []
+  ];
+
+  const ampA = new IntcodeComputer(() => inputs[0].shift());
   await ampA.initialiseFromFile('./input.txt', __dirname);
 
-  const ampB = new IntcodeComputer();
+  const ampB = new IntcodeComputer(() => inputs[1].shift());
   await ampB.initialiseFromFile('./input.txt', __dirname);
 
-  const ampC = new IntcodeComputer();
+  const ampC = new IntcodeComputer(() => inputs[2].shift());
   await ampC.initialiseFromFile('./input.txt', __dirname);
 
-  const ampD = new IntcodeComputer();
+  const ampD = new IntcodeComputer(() => inputs[3].shift());
   await ampD.initialiseFromFile('./input.txt', __dirname);
 
-  const ampE = new IntcodeComputer();
+  const ampE = new IntcodeComputer(() => inputs[4].shift());
   await ampE.initialiseFromFile('./input.txt', __dirname);
 
   let maxThrust = 0;
@@ -86,32 +95,32 @@ async function partTwo() {
     ampE.reset();
 
     // First input for each is the phase setting
-    ampA.addInput(a);
-    ampB.addInput(b);
-    ampC.addInput(c);
-    ampD.addInput(d);
-    ampE.addInput(e);
+    inputs[0].push(a);
+    inputs[1].push(b);
+    inputs[2].push(c);
+    inputs[3].push(d);
+    inputs[4].push(e);
 
     // A gets an additional input to start the process
-    ampA.addInput(0);
+    inputs[0].push(0);
     let output: number = 0;
 
     // Run until E has halted
     while (!ampE.isHalted()) {
       output = ampA.runUntilOutput()[0];
-      ampB.addInput(output);
+      inputs[1].push(output);
 
       output = ampB.runUntilOutput()[0];
-      ampC.addInput(output);
+      inputs[2].push(output);
 
       output = ampC.runUntilOutput()[0];
-      ampD.addInput(output);
+      inputs[3].push(output);
 
       output = ampD.runUntilOutput()[0];
-      ampE.addInput(output);
+      inputs[4].push(output);
 
       output = ampE.runUntilOutput()[0];
-      ampA.addInput(output);
+      inputs[0].push(output);
     }
 
     if (output > maxThrust) {

@@ -9,7 +9,8 @@ function emptySpace(length: number) {
 }
 
 async function partOne() {
-  const computer = new IntcodeComputer([]);
+  const input: number[] = [];
+  const computer = new IntcodeComputer(() => input.shift());
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   const map: string[][] = [];
@@ -19,7 +20,7 @@ async function partOne() {
     map.push([]);
 
     for (let x = 0; x < 50; x++) {
-      computer.setInput([x, y]);
+      input.push(x, y);
       const [output] = computer.runUntilOutput();
       map[y][x] = output === 1 ? '#' : '.';
 
@@ -36,7 +37,8 @@ async function partOne() {
 }
 
 async function partTwo() {
-  const computer = new IntcodeComputer([]);
+  const input: number[] = [];
+  const computer = new IntcodeComputer(() => input.shift());
   await computer.initialiseFromFile('./input.txt', __dirname);
 
   const squareSize = 100;
@@ -50,7 +52,7 @@ async function partTwo() {
     const topRow = emptySpace(lastX);
 
     while (true) {
-      computer.setInput([x, y]);
+      input.push(x, y);
       const [output] = computer.runUntilOutput();
       topRow[x] = output;
       computer.reset();
@@ -75,7 +77,7 @@ async function partTwo() {
     previousOutput = 0;
 
     while (true) {
-      computer.setInput([x, y + squareSize - 1]);
+      input.push(x, y + squareSize - 1);
       const [output] = computer.runUntilOutput();
       bottomRow[x] = output;
       computer.reset();
