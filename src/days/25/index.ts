@@ -12,6 +12,7 @@ const commands = [
   'north',
   'north',
   'north',
+  'north',
   'take mutex',
   'south',
   'south',
