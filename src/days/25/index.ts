@@ -1,4 +1,4 @@
-import { readInput } from '../../lib/input';
+import readline from 'readline-sync';
 import { IntcodeComputer } from '../../lib/intcode';
 
 function toInputs(string: string) {
@@ -34,22 +34,41 @@ const commands = [
   'north',
   'north',
   'east',
+  'inv',
   'east',
 ];
 
 async function partOne() {
-  const input: number[] = commands.reduce((memo, command) => [...memo, ...toInputs(command + '\n')], []);
-  const computer = new IntcodeComputer(() => input.shift());
-  await computer.initialiseFromFile('./input.txt', __dirname);
+  const buffer: number[] = [];
+  const computer = new IntcodeComputer(() => {
+    if (buffer.length === 0) {
+      const command = readline.prompt();
 
-  let dialog = '';
+      // Our own special commands
+      if (command === 'reset') {
+        computer.reset();
+        return 0;
+      } else if (command === 'win') {
+        computer.reset();
+        buffer.push(...toInputs(`${commands.join('\n')}\n`));
+        return 0;
+      } else if (command === 'help') {
+        console.log("Move with 'north', 'south', 'west', east'. Take items with 'take <item>', drop items with 'drop <item>', list items with 'inv'");
+        return 10;
+      }
+
+      buffer.push(...toInputs(command), ...toInputs('\n'));
+    }
+
+    return buffer.shift();
+  });
+  await computer.initialiseFromFile('./input.txt', __dirname);
 
   while (!computer.isHalted()) {
     const [output] = computer.runUntilOutput();
     const string = String.fromCharCode(output);
 
     process.stdout.write(string);
-    dialog += string;
   }
 }
 
