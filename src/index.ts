@@ -10,5 +10,7 @@ if (typeof day !== 'number') {
   process.exit(1);
 }
 
-const resolvedPath = path.resolve(__dirname, `./days/${day}`);
+const year = argv.year || 2020;
+
+const resolvedPath = path.resolve(__dirname, `./${year}/days/${day}`);
 shelljs.exec(`ts-node ${resolvedPath}`);
