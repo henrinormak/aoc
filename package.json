@@ -5,12 +5,14 @@
   "main": "index.js",
   "license": "MIT",
   "devDependencies": {
+    "@types/mkdirp": "^1.0.1",
     "@types/node": "^12.12.14",
     "@types/node-dijkstra": "^2.5.0",
     "@types/readline-sync": "^1.4.3",
     "@types/shelljs": "^0.8.6",
     "@types/yargs": "^13.0.3",
     "bignumber.js": "^9.0.0",
+    "mkdirp": "^1.0.4",
     "node-dijkstra": "^2.5.0",
     "readline-sync": "^1.4.10",
     "shelljs": "^0.8.3",
@@ -19,6 +21,7 @@
     "yargs": "^15.0.2"
   },
   "scripts": {
-    "start": "ts-node src/index.ts"
+    "start": "ts-node src/index.ts",
+    "init": "ts-node src/init.ts"
   }
 }
