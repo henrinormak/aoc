@@ -1,39 +1,5 @@
 import { readInput } from '../../../lib/input';
 
-function findRow(chars: string[]): number {
-  let lower = 0;
-  let upper = 127;
-
-  chars.forEach((char) => {
-    const change = Math.ceil((upper - lower) / 2);
-
-    if (char === 'F') {
-      upper -= change;
-    } else {
-      lower += change;
-    }
-  });
-
-  return lower;
-}
-
-function findColumn(chars: string[]): number {
-  let lower = 0;
-  let upper = 7;
-
-  chars.forEach((char) => {
-    const change = Math.ceil((upper - lower) / 2);
-
-    if (char === 'L') {
-      upper -= change;
-    } else {
-      lower += change;
-    }
-  });
-
-  return lower;
-}
-
 function getSeatId(row: number, column: number): number {
   return row * 8 + column;
 }
@@ -41,11 +7,8 @@ function getSeatId(row: number, column: number): number {
 async function partOne() {
   const input = await readInput('./input.txt', { relativeTo: __dirname, splitLines: true });
   const seatIds = input.map((line) => {
-    const chars = line.split('');
-    const row = findRow(chars.slice(0, 7));
-    const column = findColumn(chars.slice(7));
-
-    return getSeatId(row, column);
+    const binary = line.replace(/B|R/g, '1').replace(/F|L/g, '0');
+    return parseInt(binary, 2);
   });
 
   return Math.max(...seatIds);
@@ -54,11 +17,8 @@ async function partOne() {
 async function partTwo() {
   const input = await readInput('./input.txt', { relativeTo: __dirname, splitLines: true });
   const seatIds = new Set(input.map((line) => {
-    const chars = line.split('');
-    const row = findRow(chars.slice(0, 7));
-    const column = findColumn(chars.slice(7));
-
-    return getSeatId(row, column);
+    const binary = line.replace(/B|R/g, '1').replace(/F|L/g, '0');
+    return parseInt(binary, 2);
   }));
 
   for (let row = 0; row <= 127; row++) {
