@@ -16,3 +16,13 @@ export function chunkArray<T>(array: readonly T[], size: number): T[][] {
 
   return results;
 }
+
+export function flatten<T>(array: readonly T[][]): T[] {
+  const result: T[] = [];
+
+  array.forEach((val) => {
+    result.push(...val);
+  });
+
+  return result;
+}

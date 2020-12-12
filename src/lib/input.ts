@@ -3,7 +3,7 @@ import * as fs from 'fs';
 
 export interface InputOptions {
   relativeTo?: string;
-  splitBy?: string;
+  splitBy?: string | RegExp;
   splitLines?: boolean; // alias for "splitBy: '\n'"
 }
 
