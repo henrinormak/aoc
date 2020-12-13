@@ -5,8 +5,8 @@ async function partOne() {
   const [timestampStr, busIdsStr] = await readInput('./input.txt', { relativeTo: __dirname, splitLines: true });
   const timestamp = parseInt(timestampStr, 10);
   const busIds = busIdsStr.split(',').filter((val) => val !== 'x').map((id) => parseInt(id));
-
   const diffs = busIds.map((id) => ({ id, diff: id - (timestamp % id) })).sort((a, b) => a.diff - b.diff);
+
   return diffs[0].id * diffs[0].diff;
 }
 
@@ -18,8 +18,7 @@ async function partTwo() {
       return undefined;
     }
 
-    const idNumber = BigInt(id)
-    return { id: idNumber, a: modulo(BigInt(-idx), idNumber) };
+    return { id: BigInt(id), a: modulo(BigInt(-idx), BigInt(id)) };
   }).filter((val) => val !== undefined);
 
   // This was new, had to look it up via the Reddit thread discussing it
