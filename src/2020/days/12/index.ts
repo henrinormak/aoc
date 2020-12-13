@@ -26,9 +26,9 @@ function extractInstruction(input: string): Instruction {
 function applyInstruction(state: Ship, instruction: Instruction): Ship {
   switch (instruction.action) {
     case 'N':
-      return { direction: state.direction, position: { x: state.position.x, y: state.position.y - instruction.value } };
-    case 'S':
       return { direction: state.direction, position: { x: state.position.x, y: state.position.y + instruction.value } };
+    case 'S':
+      return { direction: state.direction, position: { x: state.position.x, y: state.position.y - instruction.value } };
     case 'E':
       return { direction: state.direction, position: { x: state.position.x + instruction.value, y: state.position.y } };
     case 'W':
@@ -41,7 +41,7 @@ function applyInstruction(state: Ship, instruction: Instruction): Ship {
       return {
         direction: state.direction, position: {
           x: state.direction === 90 ? state.position.x + instruction.value : state.direction === 270 ? state.position.x - instruction.value : state.position.x,
-          y: state.direction === 0 ? state.position.y - instruction.value : state.direction === 180 ? state.position.y + instruction.value : state.position.y,
+          y: state.direction === 0 ? state.position.y + instruction.value : state.direction === 180 ? state.position.y - instruction.value : state.position.y,
       } };
   }
 }
@@ -49,9 +49,9 @@ function applyInstruction(state: Ship, instruction: Instruction): Ship {
 function applyInstructionToWaypoint(waypoint: Waypoint, ship: Ship, instruction: Instruction): { waypoint: Waypoint, ship: Ship } {
   switch (instruction.action) {
     case 'N':
-      return { ship, waypoint: { position: { x: waypoint.position.x, y: waypoint.position.y - instruction.value } } };
-    case 'S':
       return { ship, waypoint: { position: { x: waypoint.position.x, y: waypoint.position.y + instruction.value } } };
+    case 'S':
+      return { ship, waypoint: { position: { x: waypoint.position.x, y: waypoint.position.y - instruction.value } } };
     case 'E':
       return { ship, waypoint: { position: { x: waypoint.position.x + instruction.value, y: waypoint.position.y } } };
     case 'W':
@@ -63,16 +63,16 @@ function applyInstructionToWaypoint(waypoint: Waypoint, ship: Ship, instruction:
       const degrees = (instruction.action === 'R' ? instruction.value : (360 - instruction.value)) % 360;
       switch (degrees) {
         case 90:
-          adjustedWaypoint.position.x = waypoint.position.y * -1;
-          adjustedWaypoint.position.y = waypoint.position.x;
+          adjustedWaypoint.position.x = waypoint.position.y;
+          adjustedWaypoint.position.y = waypoint.position.x * -1;
           break;
         case 180:
           adjustedWaypoint.position.x *= -1;
           adjustedWaypoint.position.y *= -1;
           break;
         case 270:
-          adjustedWaypoint.position.x = waypoint.position.y;
-          adjustedWaypoint.position.y = waypoint.position.x * -1;
+          adjustedWaypoint.position.x = waypoint.position.y * -1;
+          adjustedWaypoint.position.y = waypoint.position.x;
           break;
         default:
           throw new Error('Not sure how to turn');
@@ -106,7 +106,7 @@ async function partTwo() {
   };
 
   let waypoint: Waypoint = {
-    position: { x: 10, y: -1 },
+    position: { x: 10, y: 1 },
   }
 
   instructions.forEach((instruction) => {
