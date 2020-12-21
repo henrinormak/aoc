@@ -22,10 +22,11 @@
     "yargs": "^15.0.2"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "FORCE_COLOR=1 ts-node src/index.ts",
     "init": "ts-node src/init.ts"
   },
   "dependencies": {
+    "chalk": "^4.1.0",
     "xregexp": "^4.4.1"
   }
 }
