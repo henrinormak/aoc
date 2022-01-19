@@ -16,7 +16,7 @@
     "mkdirp": "^1.0.4",
     "node-dijkstra": "^2.5.0",
     "readline-sync": "^1.4.10",
-    "shelljs": "^0.8.3",
+    "shelljs": "^0.8.5",
     "ts-node": "^8.5.4",
     "typescript": "^3.7.2",
     "yargs": "^15.0.2"
